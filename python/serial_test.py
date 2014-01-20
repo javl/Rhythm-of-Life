@@ -2,12 +2,10 @@
 import serial, commands
 
 # Get current Arduino address as this can change (this might work differently on Linux)
-status, address = commands.getstatusoutput('find /dev -name "tty.usbmodem*" -maxdepth 1')
-if(address == ""):
-	print "No Arduino found. Breaking"
-	exit();
+status, address = commands.getstatusoutput('ls /dev | grep tty.usbmodem')
+if address == "": exit("No Arduino found...")
 
-ser = serial.Serial(address, 115200)
+ser = serial.Serial("/dev/"+address, 115200)
 
 # Set both the pullTimer and releaseTimer to 100ms
 ser.write('p<100>')
