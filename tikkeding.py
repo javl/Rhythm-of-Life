@@ -3,13 +3,13 @@ import sys, serial, commands
 
 def main():
 	try:
-		# Get current Arduino address as this can change (this might work differently on Linux)
+		# Get current Arduino address as this can change; this might work differently on Linux
 		status, address = commands.getstatusoutput('ls /dev | grep tty.usbmodem')
 		if address == "": exit("No Arduino found...")
 
 		ser = serial.Serial("/dev/"+address, 115200)
 
-		# Set both the pullTimer 40ms
+		# Set the pullTimer to 40ms
 		ser.write('p<40>')
 
 		while(1):
