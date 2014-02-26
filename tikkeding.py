@@ -1,19 +1,28 @@
 #! /usr/bin/env python
-import serial, commands
+import sys, serial, commands
 
-# Get current Arduino address as this can change (this might work differently on Linux)
-status, address = commands.getstatusoutput('ls /dev | grep tty.usbmodem')
-if address == "": exit("No Arduino found...")
-
-ser = serial.Serial("/dev/"+address, 115200)
-
-# Set both the pullTimer and releaseTimer to 100ms
-ser.write('p<100>')
-ser.write('r<100>')
-
-while(1):
-	myInput = raw_input("Enter a number (0-9) or r<number> / p<number>: ")
+def main():
 	try:
-		ser.write('%d' % int(myInput))
-	except:
-		ser.write(myInput)
+		# Get current Arduino address as this can change (this might work differently on Linux)
+		status, address = commands.getstatusoutput('ls /dev | grep tty.usbmodem')
+		if address == "": exit("No Arduino found...")
+
+		ser = serial.Serial("/dev/"+address, 115200)
+
+		# Set both the pullTimer 40ms
+		ser.write('p<40>')
+
+		while(1):
+			myInput = raw_input("Enter a number (0-9) or r<number> / p<number>, x to exit: ")
+			ser.write(myInput)
+			if myInput == 'x':
+				ser.close()
+				sys.exit(0)
+	except KeyboardInterrupt:
+		ser.close()
+	except Exception:
+		ser.close()
+		sys.exit(0)
+
+if __name__ == "__main__":
+	main()
