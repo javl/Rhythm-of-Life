@@ -1,7 +1,21 @@
 /*
- Serial:            115200
- Solenoid:          digital pin 6
- Indicator LED:     pin 13 (on-board LED)
+  Settings:
+    Baudrate: 115200
+    
+  Pins:
+  
+  Button --------  2
+  Power LED ----- 13
+  Activity LED -- 12
+   
+  Solenoid 1 ----   3
+  Solenoid 2 ----   4
+  Solenoid 3 ----   5
+  Solenoid 4 ----   6
+  Solenoid 5 ----   9
+  Solenoid 6 ----  10
+  Solenoid 7 ----  11
+
  
  Script takes the following serial input:
  q: pullTimer up
@@ -18,6 +32,7 @@
 #define INIT_PULLTIMER 20
 #define INIT_RELEASETIMER 65
 #define INIT_BETWEENTIMER 0
+#define BTNPIN 12
 #define TIMER_STEP 5
 
 long pullTimer = INIT_PULLTIMER;
@@ -27,6 +42,8 @@ long betweenTimer = INIT_BETWEENTIMER;
 void setup() {
   pinMode(SOLENOIDPIN, OUTPUT);
   digitalWrite(SOLENOIDPIN, LOW);
+  pinMode(BTNPIN, INPUT);
+  digitalWrite(BTNPIN, HIGH);
   pinMode(LEDPIN, OUTPUT);
   Serial.begin(115200);
   while (!Serial) {
