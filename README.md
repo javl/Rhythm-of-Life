@@ -5,8 +5,7 @@ Tikkeding is the work-in-progress name for code used in the Rhytm of Life projec
 The Rhythm of Life is a collaboration between designers / artists Mike Thompson, Susana Cámara Leret and Dave Young and the Netherlands Metabolomics Centre. The project presents a hybrid art/science research instrument, offering participants the possibility to listen in on the electro-chemical messages transmitted by their bodies, in exchange for donating their personal biodata to scientific research. 
 More info can be found at: http://therhythmoflife.nl
 
-This repository contains the code used to control seven solenoid-powered instruments, built by Jiskar Schmitz and myself (Jasper van Loenen).
-
+This repository contains the code used to control the seven solenoid modules - built by Jiskar Schmitz and Jasper van Loenen - used for the instruments.
 
 ###Arduino Setup###
 Connect the Arduino over USB and upload `tikkeding.ino` from the Arduino IDE.
