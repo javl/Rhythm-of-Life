@@ -1,20 +1,19 @@
-#Tikkeding#
+#Rhythm of Life#
 
 ###Description###
-Tikkeding is the work-in-progress name for code used in the Rhytm of Life project.
 The Rhythm of Life is a collaboration between designers / artists Mike Thompson, Susana Cámara Leret and Dave Young and the Netherlands Metabolomics Centre. The project presents a hybrid art/science research instrument, offering participants the possibility to listen in on the electro-chemical messages transmitted by their bodies, in exchange for donating their personal biodata to scientific research. 
 More info can be found at: http://therhythmoflife.nl
 
 This repository contains the code used to control the seven solenoid modules - built by Jiskar Schmitz and Jasper van Loenen - used for the instruments.
 
 ###Arduino Setup###
-Connect the Arduino over USB and upload `tikkeding.ino` from the Arduino IDE.
+Connect the Arduino over USB and upload `rhythm-of-life.ino` from the Arduino IDE.
 
 ###Control Box Setup###
 Plug in the power cord and set set the switch on the back (below the power cord) to the on position. When the green LED on the front stops blinking, connect the box to the computer using a USB cable.
 
 ###Computer Setup###
-After making sure the LED on the control box is a solid green, run the script with `python tikkeding.py` – or alternatively, make the file executable with `chmod +x tikkeding.py` and run it with `./tikkeding.py`. The orange LED on the control box will light up when a serial connection has succesfully been established.
+After making sure the LED on the control box is a solid green, run the script with `python rhythm-of-life.py` – or alternatively, make the file executable with `chmod +x rhythm-of-life.py` and run it with `./rhythm-of-life.py`. The orange LED on the control box will light up when a serial connection has succesfully been established.
 
 ###Controlling the Solenoids###
 The solenoids can be triggered by sending their index number over the serial connection. They will be activated for 40ms by default – this value can be changed from the computer, see the commands below. Active solenoids will ignore any new command during this period.
