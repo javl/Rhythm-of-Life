@@ -1,32 +1,32 @@
 /*======================================================================
  =======================================================================
- 
-  _____  _           _   _                        __   _      _  __     
- |  __ \| |         | | | |                      / _| | |    (_)/ _|    
- | |__) | |__  _   _| |_| |__  _ __ ___     ___ | |_  | |     _| |_ ___ 
+
+  _____  _           _   _                        __   _      _  __
+ |  __ \| |         | | | |                      / _| | |    (_)/ _|
+ | |__) | |__  _   _| |_| |__  _ __ ___     ___ | |_  | |     _| |_ ___
  |  _  /| '_ \| | | | __| '_ \| '_ ` _ \   / _ \|  _| | |    | |  _/ _ \
  | | \ \| | | | |_| | |_| | | | | | | | | | (_) | |   | |____| | ||  __/
  |_|  \_\_| |_|\__, |\__|_| |_|_| |_| |_|  \___/|_|   |______|_|_| \___|
-                __/ |                                                   
-               |___/                                                     
+                __/ |
+               |___/
  -----------------------------------------------------------------------
- 
+
  Settings:
  Baudrate: 115200
- 
+
  Pins:
- 
+
  Button --------  7
  Power LED ----- 13
  Activity LED -- 12
- 
+
  Solenoid 1 ----  3
  "        2 ----  4
  "        3 ----  5
  "        4 ----  6
  "        5 ----  9
  "        6 ---- 10
- "        7 ---- 11 
+ "        7 ---- 11
  */
 
 //======================================================================
@@ -58,11 +58,20 @@ int riderPin = 0;
 int riderDirection = 1;
 long riderDelay = 120;
 long riderTimer = 0;
+long flashDelay = 1000;
+long flashTimer = 0;
+
+long songDelay = 150;
+long songTimer = 0;
+int songIndex = 0;
+
+int songScore[] = {
+  1, 9, 9, 9, 9, 1, 9, 1, 9, 1, 9, 9, 9, 9, 1, 9, 1, 9, 1, 9, 9, 9, 1, 9, 1, 9, 2, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9};
 
 //======================================================================
 // Setup and main loop
 //======================================================================
-void setup (){ 
+void setup (){
   Serial.begin (115200);
 
   // Set pin modes
@@ -92,27 +101,82 @@ void loop (){
   }
   checkTimers ();
   checkBtn ();
+
+  // KNIGHRIDER
   if(specialMode == 1){
-    triggerPin(random(7));
-  }
-  else if(specialMode == 2){
     if(millis() - riderTimer > riderDelay){
       riderTimer = millis();
-      triggerPin(riderPin);      
+      triggerPin(riderPin);
       riderPin += riderDirection;
       if(riderPin < 0){
         riderPin = 1;
-        riderDirection = 1; 
+        riderDirection = 1;
       }
       else if(riderPin > 6){
         riderPin = 5;
-        riderDirection = -1; 
+        riderDirection = -1;
       }
     }
   }
+  // RANDOM
+  else if(specialMode == 2){
+    triggerPin(random(7));
+  }
+  // MOVE RIGHT
   else if(specialMode == 3){
-
-  } 
+    riderDirection = 1;
+    if(millis() - riderTimer > riderDelay){
+      riderTimer = millis();
+      triggerPin(riderPin);
+      riderPin += riderDirection;
+      if(riderPin > 6){
+        riderPin = 0;
+      }
+    }
+  }
+  // MOVE LEFT
+  else if(specialMode == 4){
+    riderDirection = -1;
+    if(millis() - riderTimer > riderDelay){
+      riderTimer = millis();
+      triggerPin(riderPin);
+      riderPin += riderDirection;
+      if(riderPin < 0){
+        riderPin = 6;
+      }
+    }
+  }
+  // FLASH
+  else if(specialMode == 5){
+    if(millis() - flashTimer > flashDelay){
+      flashTimer = millis();
+      triggerPin(0);
+      triggerPin(1);
+      triggerPin(2);
+      triggerPin(3);
+      triggerPin(4);
+      triggerPin(5);
+      triggerPin(6);
+    }
+  }
+  else if(specialMode == 6){
+    if(millis() - songTimer > songDelay){
+      songTimer = millis();
+      songIndex++;
+      if(songIndex > 36){
+        songIndex = 0;
+      }
+      if(songScore[songIndex] == 1){
+        triggerPin(0);
+        triggerPin(1);
+        triggerPin(2);
+      }else if(songScore[songIndex] == 2){
+        triggerPin(3);
+        triggerPin(4);
+        triggerPin(6);
+      }
+    }
+  }
 }
 
 //======================================================================
@@ -137,7 +201,7 @@ void triggerPin(const int index){
     if(timers[index] == 0){
       timers[index] = millis()+pullTimer;
       digitalWrite(pins[index], HIGH);
-    }    
+    }
   }
 }
 
@@ -150,25 +214,25 @@ void processInput (){
 
   const byte c = Serial.read ();
   if(specialMode){
-    return; 
+    return;
   }
   switch (c){
-  case '0' ... '9': 
+  case '0' ... '9':
     if(!receivingTimer){
       triggerPin(c-'0');
-    } 
+    }
     else{
       receivedNumber *= 10;
       receivedNumber += c - '0';
     }
     break;
   case '>':
-    receivingTimer = 0; 
+    receivingTimer = 0;
     pullTimer = receivedNumber;
-    break;  
+    break;
   case '<':
-    receivingTimer = 1; 
-    receivedNumber = 0; 
+    receivingTimer = 1;
+    receivedNumber = 0;
     break;
   }
 }
@@ -177,9 +241,9 @@ void processInput (){
 // Check state of button
 //======================================================================
 void checkBtn(){
-//  if(millis() < 2000){ //ignore all inputs during the first 2 seconds
-//    return;      
-//  }
+  //  if(millis() < 2000){ //ignore all inputs during the first 2 seconds
+  //    return;
+  //  }
   int reading = digitalRead(BTN_PIN);
   if (reading != lastButtonState) {
     lastDebounceTime = millis();
@@ -188,7 +252,7 @@ void checkBtn(){
     if (reading != buttonState) {
       buttonState = reading;
       if (buttonState == LOW) { // when button is released
-        btnTimesPressed++;        
+        btnTimesPressed++;
         btnTimer = millis();
       }
     }
@@ -212,15 +276,10 @@ void checkBtn(){
         triggerByBtn();
       }
       else if(btnTimesPressed == 3){ // three presses, enable special modes if available
-        if(menuIndex == 0){
-          specialMode = 1;
-        }
-        else if(menuIndex == 1){
-          specialMode = 2;
-        }
+        specialMode = menuIndex + 1;
       }
     }
-    btnTimesPressed = 0;          
+    btnTimesPressed = 0;
   }
 }
 
